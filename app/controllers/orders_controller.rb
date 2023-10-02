@@ -3,8 +3,17 @@ class OrdersController < ApplicationController
 
   # GET /orders or /orders.json
   def index
-    @orders = Order.all
-    render json: { orders: @orders.select(:name, :networks) }
+    @orders = []
+      Order.includes(:networks).each do |order|
+        @orders << {
+          name: order.name,
+          created_at: order.created_at,
+          networks_count: order.networks.size
+        }
+        end
+    # @orders = Order.all  # init
+    render json: { orders: @orders }
+    # render json: { orders: @orders.select(:name, :networks) }  # okay!
   end
 
   # GET /orders/1 or /orders/1.json
