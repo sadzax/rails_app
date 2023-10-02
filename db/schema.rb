@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_02_153920) do
+ActiveRecord::Schema.define(version: 2023_10_02_171427) do
+
+  create_table "networks", force: :cascade do |t|
+    t.string "name"
+    t.integer "order_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["order_id"], name: "index_networks_on_order_id"
+  end
+
+  create_table "networks_orders", id: false, force: :cascade do |t|
+    t.integer "order_id", null: false
+    t.integer "network_id", null: false
+  end
 
   create_table "orders", force: :cascade do |t|
     t.string "name"
@@ -51,6 +64,7 @@ ActiveRecord::Schema.define(version: 2023_10_02_153920) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "networks", "orders"
   add_foreign_key "orders", "users"
   add_foreign_key "passport_data", "users"
 end
