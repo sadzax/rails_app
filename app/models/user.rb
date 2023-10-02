@@ -1,4 +1,5 @@
 class User < ApplicationRecord
-    has_many :orders  # руками прописал
-    has_one :passport_data  # руками прописал
+    scope :longname, -> { where('length(first_name) > 5') }
+    has_many :orders  
+    has_one :passport_data
 end
