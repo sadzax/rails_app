@@ -3,17 +3,20 @@ class OrdersController < ApplicationController
 
   # GET /orders or /orders.json
   def index
-    @orders = []
-      Order.includes(:networks).each do |order|
-        @orders << {
-          name: order.name,
-          created_at: order.created_at,
-          networks_count: order.networks.size
-        }
-        end
+    # @orders = []
+    #   Order.includes(:networks).each do |order|
+    #     @orders << {
+    #       name: order.name,
+    #       created_at: order.created_at,
+    #       networks_count: order.networks.size
+    #     }
+    #     end
+    page = params[:page].present? ? params[:page].to_i : 1
+    per_page = params[:per_page].present? ? params[:per_page].to_i : 30
+    @orders = Order.limit(per_page).offset((page-1) * per_page).order('id ASC') # нужно умножить
     # @orders = Order.all  # init
-    render json: { orders: @orders }
-    # render json: { orders: @orders.select(:name, :networks) }  # okay!
+    # render json: { orders: @orders }
+    # # render json: { orders: @orders.select(:name, :networks) }  # okay!
   end
 
   # GET /orders/1 or /orders/1.json
@@ -58,6 +61,8 @@ class OrdersController < ApplicationController
   end
 
   # DELETE /orders/1 or /orders/1.json
+
+
   def destroy
     @order.destroy
 
