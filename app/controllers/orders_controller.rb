@@ -17,7 +17,7 @@ class OrdersController < ApplicationController
     # @orders = Order.all  # init
     # render json: { orders: @orders }
     # # render json: { orders: @orders.select(:name, :networks) }  # okay!
-  end
+  end 
 
   # GET /orders/1 or /orders/1.json
   def show
