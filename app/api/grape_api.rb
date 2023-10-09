@@ -1,4 +1,4 @@
 class GrapeApi < Grape::API
-    mount VmsApi
-    mount ProjectsApi
+  mount VmsApi
+  mount ProjectsApi
 end
