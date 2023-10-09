@@ -3,7 +3,9 @@ class GroupsController < ApplicationController
 
   # GET /groups or /groups.json
   def index
-    @groups = Group.all
+    groups = Group.all
+    groups = groups.where(name: params[:name]) if params[:name]
+    render json: groups.select(:id, :name)
   end
 
   # GET /groups/1 or /groups/1.json
