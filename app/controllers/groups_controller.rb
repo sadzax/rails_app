@@ -10,6 +10,11 @@ class GroupsController < ApplicationController
 
   # GET /groups/1 or /groups/1.json
   def show
+    # if groups.select(:id)  # Переделать p-39, p.2
+      render json: groups.select(:id, :name)
+    # else
+    #   render :status => 404
+    # end
   end
 
   # GET /groups/new
