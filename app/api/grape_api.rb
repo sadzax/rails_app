@@ -1,6 +1,4 @@
-class GrapeAPI < Grape::API
-    mount VmsAPI
+class GrapeApi < Grape::API
+    mount VmsApi
+    mount ProjectsApi
 end
-
-namespace :vms do
- 
