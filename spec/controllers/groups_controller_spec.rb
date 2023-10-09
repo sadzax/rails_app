@@ -45,4 +45,24 @@ RSpec.describe GroupsController, type: :controller do
         end
 
     end
+    
+    describe 'POST #create' do
+
+        it 'creates group' do
+            post :create, params: { group: { name: 'foo' } }
+            expect(Group.first).to have_attributes(name: 'foo')
+        end
+
+        it 'returns group attributes' do
+            post :create, params: { group: { name: 'foo' } }
+            expect(JSON.parse(response.body).keys).to contain_exactly('id', 'name')
+        end
+    end
+
+    describe 'DELETE #destroy' do
+        it 'deletes group' do
+            delete :destroy, params: { group: { id: 1 } }
+            expect(response).to have_http_status(:no_content)  # Так? или не так?
+        end
+    end
 end
