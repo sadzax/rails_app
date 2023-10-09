@@ -1,3 +1,6 @@
+require 'httpclient'
+require 'json'
+
 class OrdersController < ApplicationController
   before_action :set_order, only: %i[ show edit update destroy ]
 
@@ -62,7 +65,6 @@ class OrdersController < ApplicationController
 
   # DELETE /orders/1 or /orders/1.json
 
-
   def destroy
     @order.destroy
 
@@ -72,14 +74,50 @@ class OrdersController < ApplicationController
     end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_order
-      @order = Order.find(params[:id])
-    end
+  def check
+    before_action :authenticate_user!
+    #  Получить пользователя этого заказа
+    possible_orders_url = 'http://possible_orders.srv.w55.ru/'
+    possible_orders_data = process_possible_orders(possible_orders_url)
+    if order_is_valid?(params, possible_orders_data)
+      status = 'ok'
+      result = true
+      render json: { message: 'Параметры заказа получены' }
+    else
+      ## Rescue? 
+      status = '406'
+      result = false
+      render json: { message: 'Некорректные параметры заказа' }
+    #  Запросить цену машины
+    #  Запросить баланс пользователя
+    main_response 
+  end
 
-    # Only allow a list of trusted parameters through.
-    def order_params
-      params.require(:order).permit(:name, :status, :cost)
-    end
+  private
+  def order_is_valid?(order_params, possible_orders_data)
+    return false unless order_params['cpu'].to_i.to_s == order_params['cpu']
+    return false unless order_params['ram'].to_i.to_s == order_params['ram']
+    return false unless order_params['hdd_capacity'].to_i.to_s == order_params['hdd_capacity']
+    ## Прописать
+    return false unless %w[sata sas ssd].include?(order_params['hdd_type'])
+    return false unless %w[windows linux].include?(order_params['os'])
+    ## Временная заглушка
+    true
+  end
+
+  def process_possible_orders(url)
+    client = HTTPClient.new
+    get_response = client.request(:get, url)
+    JSON.parse(get_response)
+  end
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_order
+    @order = Order.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def order_params
+    params.require(:order).permit(:name, :status, :cost)
+  end
 end
