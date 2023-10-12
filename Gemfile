@@ -57,3 +57,7 @@ gem 'grape-swagger-entity'
 gem 'grape-swagger-rails'
 
 gem 'httpclient'
+
+gem 'bunny'
+gem 'sidekiq', require: ['sidekiq', 'sidekiq/web']
+gem 'redis'
