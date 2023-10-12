@@ -36,15 +36,17 @@
 #         )
 # end
 
-10.times do |time|
-    Vm.create(name: "vm-#{time}",
-    cpu: rand(100),
-    ram: rand(100),
-    cost: rand(10000))
+# 10.times do |time|
+#     Vm.create(name: "vm-#{time+22}",
+#     cpu: rand(100),
+#     ram: rand(100),
+#     cost: rand(10000))
 
-    Hdd.create(hdd_type: "sata",
-    size: rand(200))
+#     Hdd.create(hdd_type: "sata",
+#     size: rand(200))
 
-    Project.create(name: "Proj-#{time}",
-    stage: "Running")
-end
+#     Project.create(name: "Proj-#{time+22}",
+#     stage: "Running")
+# end
+
+15.times { |i| Group.create(name: "group#{i}") }
