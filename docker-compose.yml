@@ -9,8 +9,13 @@ services:
       - "3000:3000"
     depends_on:
       - db
-    environment:
-      REDIS_URL: redis://redis:6379/0
+  costcalc:
+    build: ~/pr/hw1/
+    command: ruby sinatra_server.rb
+    volumes:
+      - ~/pr/hw1/:/usr/src/hw1
+    ports:
+      - "8082:5678"
   rabbitmq:
     image: rabbitmq:management-alpine
     ports:
