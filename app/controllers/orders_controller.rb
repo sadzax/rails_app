@@ -1,5 +1,6 @@
 require 'httpclient'
 require 'json'
+require 'uri'
 
 class OrdersController < ApplicationController
   before_action :set_order, only: %i[ show edit update destroy ]
@@ -74,41 +75,92 @@ class OrdersController < ApplicationController
     end
   end
 
-  def check
+  DEFAULT_COST_SERVICE = 'http://costcalc:5678/calc'  # Не localhost?
+  def check(params, user_id, cost_service = DEFAULT_COST_SERVICE)
     before_action :authenticate_user!
-    #  Получить пользователя этого заказа
-    possible_orders_url = 'http://possible_orders.srv.w55.ru/'
-    possible_orders_data = process_possible_orders(possible_orders_url)
-    if order_is_valid?(params, possible_orders_data)
-      status = 'ok'
-      result = true
-      render json: { message: 'Параметры заказа получены' }
-    else
-      ## Rescue? 
-      status = '406'
-      result = false
-      render json: { message: 'Некорректные параметры заказа' }
-    #  Запросить цену машины
-    #  Запросить баланс пользователя
-    main_response 
+    
+    # You can create a test user or find an existing one
+    user  = User.find_by(id: user_id)
+    # user  = User.find_by(id: 1) || User.create(first_name: 'Ivan', last_name: 'Oleg', balance: 1000) # для
+
+    #  Проверка пользователя на 401 ошибку
+    if user.nil? || params[:balance].nil?
+      render json: { error: 'Unauthorized' }, status: :unauthorized
+      return
+    end
+
+    possible_configs = get_possible_configs  # Можно передать другой конфиг, если указать аргумент
+
+    #  Проверка конфигурации на 406 ошибку
+    unless possible_config?(params, possible_configs)
+      render json: { result: false, error: 'Not Acceptable' }, status: :not_acceptable
+      return
+    end
+
+    begin
+      # MASK = {cpu, ram, hdd_type, hdd_capacity}  
+      # url tail example:  /calc?cpu=2&ram=27&hdd_type=sata&hdd_capacity=233333232
+      #  Считает конфигурацию
+      url_with_params = "#{cost_service}?#{URI.encode_www_form(params)}"
+      client = HTTPClient.new
+      response_of_the_service = client.get(url_with_params)
+
+      #  Проверка сервиса на 503 ошибку
+      if response_of_the_service.status != 200
+        render json: { result: false, error: 'Service Unavailable' }, status: :service_unavailable
+        return
+      end
+
+      result_calc_data = JSON.parse(response_of_the_service.body)
+      cost_of_new_order = result_calc_data['result']
+      balance_after_transaction = user.balance - cost_of_new_order
+
+      render json: {
+        result: true,
+        total: cost_of_new_order,
+        balance: user.balance,
+        balance_after_transaction: balance_after_transaction
+      }
+
+    #  Проверка сервиса на 503 ошибку
+    rescue StandartError => each
+      render json:  { result: false, error: 'Service Unavailable' }, status: :service_unavailable
+    end
+  end
+
+
+
+
+    
+  DEFAULT_COST_SERVICE = 'http://costcalc:5678/calc'  # Не localhost?
+  def check(params, cost_service = DEFAULT_COST_SERVICE)
+    before_action :authenticate_user!
+    possible_configs = get_possible_configs
+    if possible_config?(params, possible_configs)
+
+
   end
 
   private
-  def order_is_valid?(order_params, possible_orders_data)
-    return false unless order_params['cpu'].to_i.to_s == order_params['cpu']
-    return false unless order_params['ram'].to_i.to_s == order_params['ram']
-    return false unless order_params['hdd_capacity'].to_i.to_s == order_params['hdd_capacity']
-    ## Прописать
-    return false unless %w[sata sas ssd].include?(order_params['hdd_type'])
-    return false unless %w[windows linux].include?(order_params['os'])
-    ## Временная заглушка
-    true
-  end
-
-  def process_possible_orders(url)
+  def get_possible_configs(url = 'http://possible_orders.srv.w55.ru/')
     client = HTTPClient.new
     get_response = client.request(:get, url)
-    JSON.parse(get_response)
+    JSON.parse(get_response.body)
+  end
+
+  def possible_config?(params, possible_configs)
+    status = false  # По умолчанию у нас условие соответствия конфигурации не выполнено
+    possible_configs["specs"].each do |configuration|
+      if params[:os] == configuration["os"][0] &&
+        configuration["cpu"].include?(params[:cpu].to_i.to_s) &&
+        configuration["ram"].include?(params[:ram].to_i.to_s) &&
+        configuration["hdd_type"].include?(params[:hdd_type]) &&
+        params[:hdd_capacity].between?(configuration["hdd_capacity"][params[:hdd_type]]["from"], 
+                                       configuration["hdd_capacity"][params[:hdd_type]]["to"])
+        status = true
+      end
+    end
+    return status
   end
 
   # Use callbacks to share common setup or constraints between actions.
@@ -120,4 +172,5 @@ class OrdersController < ApplicationController
   def order_params
     params.require(:order).permit(:name, :status, :cost)
   end
+end
 end

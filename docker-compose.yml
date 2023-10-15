@@ -9,6 +9,13 @@ services:
       - "3000:3000"
     depends_on:
       - db
+  costcalc:
+    build: ~/pr/hw1/
+    command: ruby sinatra_server.rb
+    volumes:
+      - ~/pr/hw1/:/usr/src/hw1
+    ports:
+      - "8082:5678"
   
   db:
     image: postgres:11.5
