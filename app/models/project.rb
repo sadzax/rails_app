@@ -1,3 +1,3 @@
 class Project < ApplicationRecord
-    has_and_belongs_to_many :vm
+  has_and_belongs_to_many :vm
 end

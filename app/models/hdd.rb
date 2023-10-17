@@ -1,3 +1,3 @@
 class Hdd < ApplicationRecord
-    has_one :vm
+  has_one :vm
 end
