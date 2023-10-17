@@ -77,12 +77,9 @@ class OrdersController < ApplicationController
 
   DEFAULT_COST_SERVICE = 'http://costcalc:5678/calc'  # Не localhost?
   def check(params, user_id, cost_service = DEFAULT_COST_SERVICE)
-    before_action :authenticate_user!
-    
-    # You can create a test user or find an existing one
+    before_action :authenticate_user!  
     user  = User.find_by(id: user_id)
-    # user  = User.find_by(id: 1) || User.create(first_name: 'Ivan', last_name: 'Oleg', balance: 1000) # для
-
+  
     #  Проверка пользователя на 401 ошибку
     if user.nil? || params[:balance].nil?
       render json: { error: 'Unauthorized' }, status: :unauthorized
@@ -126,19 +123,6 @@ class OrdersController < ApplicationController
     rescue StandartError => each
       render json:  { result: false, error: 'Service Unavailable' }, status: :service_unavailable
     end
-  end
-
-
-
-
-    
-  DEFAULT_COST_SERVICE = 'http://costcalc:5678/calc'  # Не localhost?
-  def check(params, cost_service = DEFAULT_COST_SERVICE)
-    before_action :authenticate_user!
-    possible_configs = get_possible_configs
-    if possible_config?(params, possible_configs)
-
-
   end
 
   private
