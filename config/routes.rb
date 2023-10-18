@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   resources :orders
   resources :vms
 
+  get 'orders/check'
+
   # get '/calc' do
   #   costcalc_uri = URI.parse('http://costcalc:5678/calc')
 
