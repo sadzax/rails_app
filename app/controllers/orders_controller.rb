@@ -6,6 +6,7 @@ class OrdersController < ApplicationController
   before_action :set_order, only: %i[ show edit update destroy ]
   before_action :authenticate_user!, only: [:check]
   before_action :set_user, only: [:check]
+  DEFAULT_COST_SERVICE = 'http://costcalc:5678/calc'  # Не localhost?
 
   # GET /orders or /orders.json
   def index
@@ -77,15 +78,16 @@ class OrdersController < ApplicationController
     end
   end
 
-  DEFAULT_COST_SERVICE = 'http://costcalc:5678/calc'  # Не localhost?
-  def check(cost_service = DEFAULT_COST_SERVICE, attr)
+
+  def check
     
     user = @user
+    cost_service = DEFAULT_COST_SERVICE
 
     possible_configs = parse_possible_configs  # Можно передать другой конфиг, если указать аргумент
 
     #  Проверка конфигурации на 406 ошибку
-    unless possible_config?(possible_configs, attr)
+    unless possible_config?(possible_configs, params)
       render json: { result: false, error: 'Not Acceptable' }, status: :not_acceptable
       return
     end
@@ -93,7 +95,7 @@ class OrdersController < ApplicationController
       # MASK = {cpu, ram, hdd_type, hdd_capacity}  
       # url tail example:  /calc?cpu=2&ram=27&hdd_type=sata&hdd_capacity=233333232
       #  Считает конфигурацию
-      url_with_params = "#{cost_service}?#{URI.encode_www_form(attr)}"
+      url_with_params = "#{cost_service}?#{URI.encode_www_form(params)}"
       client = HTTPClient.new
       response_of_the_service = client.get(url_with_params)
 
@@ -125,8 +127,8 @@ class OrdersController < ApplicationController
   end
   
   private
-  def set_user(user_id)
-    @user  = User.find_by(id: user_id)
+  def set_user
+    @user  = User.find_by(id: params[:user_id])
     #  Проверка пользователя на 401 ошибку
     if user.nil? || params[:balance].nil?
       render json: { error: 'Unauthorized' }, status: :unauthorized
