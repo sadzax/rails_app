@@ -10,10 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_06_165432) do
+ActiveRecord::Schema.define(version: 2023_10_19_183527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "groups", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "hdds", force: :cascade do |t|
     t.string "hdd_type"
@@ -64,6 +70,14 @@ ActiveRecord::Schema.define(version: 2023_10_06_165432) do
   create_table "projects", force: :cascade do |t|
     t.string "name"
     t.string "stage"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "reports", force: :cascade do |t|
+    t.string "report_name"
+    t.integer "quantity"
+    t.string "hdd_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
