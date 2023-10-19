@@ -164,4 +164,3 @@ class OrdersController < ApplicationController
     params.require(:order).permit(:name, :status, :cost)
   end
 end
-end

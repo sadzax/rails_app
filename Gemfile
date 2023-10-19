@@ -61,13 +61,3 @@ gem 'httpclient'
 gem 'bunny'
 gem 'sidekiq', require: ['sidekiq', 'sidekiq/web']
 gem 'redis'
-
-group :development, :test do
-#  ...
- gem 'rspec-rails', '~> 4.1'
- gem 'factory_bot_rails'
- gem 'webmock'
- gem 'rubocop', require: false
- gem 'bundler-audit'
- gem 'simplecov', require: false
-end
