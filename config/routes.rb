@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   get 'orders/check', controller: :orders
   resources :orders
   resources :vms
-
+  mount Sidekiq::Web => '/sidekiq'
 
   # get '/calc' do
   #   costcalc_uri = URI.parse('http://costcalc:5678/calc')

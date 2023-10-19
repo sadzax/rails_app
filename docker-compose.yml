@@ -43,10 +43,11 @@ services:
   #   command: sidekiq
   #   volumes:
   #     - ./:/usr/scr/
-  #   environment:
-  #     - redis://redis:6379/0
+  #   # environment:
+  #   #   - redis://redis:6379/0
 
 volumes:
   postgres:
   rabbit:
   redis:
+  # sidekiq:
