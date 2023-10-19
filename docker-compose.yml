@@ -26,17 +26,17 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
-  # rabbitmq:
-  #   image: rabbitmq:management-alpine
-  #   ports:
-  #   - 15672:15672
-  #   volumes:
-  #   - rabbit:/var/lib/rabbitmq
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    ports:
+    - 15672:15672
+    volumes:
+    - rabbit:/var/lib/rabbitmq
 
-  # redis:
-  #   image: redis:alpine
-  #   volumes:
-  #     - redis:/data
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis:/data
 
   # sidekiq:
   #   image: app
@@ -48,5 +48,5 @@ services:
 
 volumes:
   postgres:
-  # rabbit:
-  # redis:
+  rabbit:
+  redis:

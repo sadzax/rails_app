@@ -82,8 +82,6 @@ GEM
     date (3.3.3)
     diff-lcs (1.5.0)
     docile (1.4.0)
-    diff-lcs (1.5.0)
-    docile (1.4.0)
     dry-configurable (0.13.0)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.6)
@@ -103,11 +101,6 @@ GEM
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 1.0, >= 1.0.2)
     erubi (1.12.0)
-    factory_bot (6.2.1)
-      activesupport (>= 5.0.0)
-    factory_bot_rails (6.2.0)
-      factory_bot (~> 6.2.0)
-      railties (>= 5.0.0)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.2.0)
@@ -133,7 +126,6 @@ GEM
       grape-swagger (>= 1.2.0)
     grape-swagger-rails (0.4.0)
       railties (>= 6.0.6.1)
-    hashdiff (1.0.1)
     hashdiff (1.0.1)
     httpclient (2.8.3)
     i18n (1.14.1)
@@ -181,10 +173,6 @@ GEM
     parser (3.2.2.4)
       ast (~> 2.4.1)
       racc
-    parallel (1.23.0)
-    parser (3.2.2.4)
-      ast (~> 2.4.1)
-      racc
     pg (1.5.4)
     public_suffix (5.0.3)
     puma (5.6.7)
@@ -224,7 +212,6 @@ GEM
       method_source
       rake (>= 12.2)
       thor (~> 1.0)
-    rainbow (3.1.1)
     rainbow (3.1.1)
     rake (13.0.6)
     rb-fsevent (0.11.2)
@@ -306,11 +293,6 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
-    web-console (4.2.1)
-      actionview (>= 6.0.0)
-      activemodel (>= 6.0.0)
-      bindex (>= 0.4.0)
-      railties (>= 6.0.0)
     webmock (3.19.1)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
@@ -328,7 +310,6 @@ DEPENDENCIES
   bundler-audit
   bunny
   byebug
-  factory_bot_rails
   factory_bot_rails
   grape
   grape-entity
@@ -350,7 +331,6 @@ DEPENDENCIES
   simplecov
   spring
   tzinfo-data
-  web-console (>= 4.1.0)
   webmock
 
 RUBY VERSION
