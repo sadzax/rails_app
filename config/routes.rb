@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get 'orders/check', controller: :orders
   resources :orders
   resources :vms
-
+  mount Sidekiq::Web => '/sidekiq'
 
   # get '/calc' do
   #   costcalc_uri = URI.parse('http://costcalc:5678/calc')
@@ -26,4 +26,9 @@ Rails.application.routes.draw do
   mount GrapeApi => '/api'
   mount Sidekiq::Web => '/sidekiq'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+
+  namespace :api do
+    resources :reports, only: [:create]
+  end
+
 end

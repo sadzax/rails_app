@@ -1,27 +1,25 @@
 version: '3'
 services:
-  app: 
+  app: &app
     build: .
     command: rails s -b 0.0.0.0 
     volumes:
       - .:/usr/src
     ports:
       - "3000:3000"
+    environment:
+      REDIS_URL: redis://redis:6379/0
     depends_on:
       - db
+
   costcalc:
     build: ~/pr/hw1/
     command: ruby sinatra_server.rb
     volumes:
       - ~/pr/hw1/:/usr/src/hw1
     ports:
-      - "8082:5678"
-  rabbitmq:
-    image: rabbitmq:management-alpine
-    ports:
-    - 15672:15672
-    volumes:
-    - rabbit:/var/lib/rabbitmq
+      - 8082:5678
+  
   db:
     image: postgres:11.5
     environment:
@@ -29,20 +27,29 @@ services:
       POSTGRES_PASSWORD: password 
     volumes:
       - postgres:/var/lib/postgresql/data
-  sidekiq:
-    build: .
-    # image: app
-    command: sidekiq
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    ports:
+      - 15672:15672
     volumes:
-      - ./:/usr/src/
-    environment:
-      REDIS_URL: redis://redis:6379/0
+      - rabbit:/var/lib/rabbitmq
+
   redis:
     image: redis:alpine
     volumes:
       - redis:/data
-  
+
+  sidekiq:
+    image: *app 
+    command: sidekiq
+    volumes:
+      - ./:/usr/scr/
+    environment:
+      - REDIS_URL: "redis://redis:6379/0"
+
 volumes:
   postgres:
   rabbit:
   redis:
+  sidekiq:
