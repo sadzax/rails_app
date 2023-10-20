@@ -81,7 +81,6 @@ class OrdersController < ApplicationController
 
   def check
     
-    user = @user
     cost_service = DEFAULT_COST_SERVICE
 
     possible_configs = parse_possible_configs  # Можно передать другой конфиг, если указать аргумент
@@ -107,7 +106,7 @@ class OrdersController < ApplicationController
 
       result_calc_data = JSON.parse(response_of_the_service.body)
       cost_of_new_order = result_calc_data['result']
-      balance_after_transaction = user.balance - cost_of_new_order
+      balance_after_transaction = @user.balance - cost_of_new_order
       unless balance_after_transaction < 0
         render json: { result: false, error: 'Not Acceptable' }, status: :not_acceptable
         return
@@ -116,7 +115,7 @@ class OrdersController < ApplicationController
       render json: {
         result: true,
         total: cost_of_new_order,
-        balance: user.balance,
+        balance: @user.balance,
         balance_after_transaction: balance_after_transaction
       }
 
